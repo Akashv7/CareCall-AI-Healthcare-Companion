@@ -1,18 +1,47 @@
 import google.generativeai as genai
+import os
+
+from dotenv import load_dotenv
+
+from src.rag_engine import retrieve_context
 
 
+# ================= LOAD API KEY =================
+
+load_dotenv()
+
+
+genai.configure(
+
+    api_key=os.getenv(
+        "GEMINI_API_KEY"
+    )
+
+)
+
+
+
+# ================= GEMINI MODEL =================
 
 
 model = genai.GenerativeModel(
+
     "gemini-2.0-flash"
+
 )
 
+
+
+
+
+# ================= OFFLINE AI =================
 
 
 def offline_health_ai(message):
 
 
     message = message.lower()
+
 
 
     if "fever" in message:
@@ -24,19 +53,27 @@ def offline_health_ai(message):
 
 Possible Reason:
 - Viral infection
-- Weather changes
+- Seasonal changes
 - Weak immunity
+
 
 Health Suggestions:
 ✔ Drink enough water
 ✔ Take proper rest
-✔ Monitor temperature
+✔ Monitor body temperature
 
-Consult a doctor if:
-- Fever continues for more than 2-3 days
+
+Prevention:
+✔ Maintain hygiene
+✔ Eat healthy food
+
+
+Consult doctor if:
+- Fever continues for several days
 - Temperature becomes very high
 
 """
+
 
 
     elif "headache" in message:
@@ -51,12 +88,15 @@ Possible Reason:
 - Lack of sleep
 - Dehydration
 
+
 Health Suggestions:
-✔ Drink water
+✔ Drink enough water
 ✔ Rest properly
 ✔ Reduce screen time
 
+
 """
+
 
 
     elif "chest" in message:
@@ -66,31 +106,57 @@ Health Suggestions:
 
 🤖 CareCall AI Analysis
 
-Possible Heart Related Symptoms.
+Possible Heart Related Symptoms
+
 
 Suggestions:
-✔ Check BP
-✔ Avoid heavy activity
-✔ Consult doctor if pain continues
+✔ Monitor BP
+✔ Avoid heavy physical activity
+✔ Seek medical help if pain continues
+
 
 """
 
 
-    elif "sugar" in message:
+
+    elif "sugar" in message or "diabetes" in message:
 
 
         return """
 
 🤖 CareCall AI Analysis
 
-Possible Diabetes Related Symptoms.
+Possible Diabetes Related Symptoms
+
 
 Suggestions:
 ✔ Monitor glucose level
 ✔ Maintain healthy diet
 ✔ Exercise regularly
 
+
 """
+
+
+
+    elif "urine" in message or "kidney" in message:
+
+
+        return """
+
+🤖 CareCall AI Analysis
+
+Possible Kidney Related Symptoms
+
+
+Suggestions:
+✔ Drink adequate water
+✔ Monitor symptoms
+✔ Consult healthcare professional
+
+
+"""
+
 
 
     else:
@@ -100,12 +166,16 @@ Suggestions:
 
 🤖 CareCall AI Analysis
 
-Maintain:
-✔ Proper sleep
-✔ Hydration
-✔ Healthy food
 
-Monitor symptoms and consult doctor if needed.
+General Suggestions:
+
+✔ Maintain proper sleep
+✔ Stay hydrated
+✔ Eat nutritious food
+✔ Monitor symptoms
+
+
+Consult doctor if symptoms continue.
 
 """
 
@@ -113,33 +183,81 @@ Monitor symptoms and consult doctor if needed.
 
 
 
+
+
+# ================= RAG + GEMINI AI =================
+
+
 def ask_ai(message):
-
-
-    prompt=f"""
-
-    You are CareCall AI,
-    an elderly healthcare assistant.
-
-    Patient:
-    {message}
-
-    Give simple healthcare advice.
-
-    Do not prescribe medicines.
-
-    """
 
 
     try:
 
 
-        response=model.generate_content(
-            prompt
+        # -------- Retrieve medical knowledge --------
+
+        context = retrieve_context(
+
+            message
+
         )
 
 
+
+        prompt = f"""
+
+
+You are CareCall AI,
+an elderly healthcare assistant.
+
+
+Use the verified medical knowledge below:
+
+
+{context}
+
+
+
+Patient Symptoms:
+
+{message}
+
+
+
+Provide:
+
+1. Possible reason
+
+2. Health suggestions
+
+3. Prevention tips
+
+4. When to consult doctor
+
+
+
+Rules:
+
+- Explain simply
+- Do not prescribe medicine
+- Do not provide dangerous advice
+
+
+"""
+
+
+
+        response = model.generate_content(
+
+            prompt
+
+        )
+
+
+
         return response.text
+
+
 
 
 
@@ -147,5 +265,7 @@ def ask_ai(message):
 
 
         return offline_health_ai(
+
             message
+
         )

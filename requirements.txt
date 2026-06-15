@@ -6,3 +6,7 @@ matplotlib
 seaborn
 joblib
 google-generativeai
+langchain
+langchain-community
+chromadb
+sentence-transformers
