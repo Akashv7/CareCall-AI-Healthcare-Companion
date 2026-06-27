@@ -3,17 +3,22 @@ __pycache__/
 *.pyc
 
 # Environment
-venv/
 .env
+
+# Database
+carecall.db
+
+# Chroma
+chroma_db/
+
+# Generated Reports
+reports/
+
+# Voice files
+voice_files/
 
 # VS Code
 .vscode/
 
-# Database
-*.db
-
-# API keys
-secrets.toml
-
-# OS
-.DS_Store
+# Logs
+*.log

@@ -1,4 +1,5 @@
-import google.generativeai as genai
+from google import genai
+
 import os
 
 from dotenv import load_dotenv
@@ -11,44 +12,26 @@ from src.rag_engine import retrieve_context
 load_dotenv()
 
 
-genai.configure(
-
-    api_key=os.getenv(
-        "GEMINI_API_KEY"
-    )
-
+client = genai.Client(
+    api_key=os.getenv("GEMINI_API_KEY")
 )
-
 
 
 # ================= GEMINI MODEL =================
 
-
-model = genai.GenerativeModel(
-
-    "gemini-2.0-flash"
-
-)
+MODEL_NAME = "gemini-2.0-flash"
 
 
-
-
-
-# ================= OFFLINE AI =================
-
+# ================= OFFLINE HEALTH AI =================
 
 def offline_health_ai(message):
-
 
     message = message.lower()
 
 
-
     if "fever" in message:
 
-
         return """
-
 🤖 CareCall AI Analysis
 
 Possible Reason:
@@ -56,31 +39,25 @@ Possible Reason:
 - Seasonal changes
 - Weak immunity
 
-
 Health Suggestions:
 ✔ Drink enough water
 ✔ Take proper rest
-✔ Monitor body temperature
-
+✔ Monitor temperature
 
 Prevention:
 ✔ Maintain hygiene
 ✔ Eat healthy food
 
+Consult doctor if fever continues.
 
-Consult doctor if:
-- Fever continues for several days
-- Temperature becomes very high
-
+📚 Source:
+Offline CareCall Knowledge
 """
-
 
 
     elif "headache" in message:
 
-
         return """
-
 🤖 CareCall AI Analysis
 
 Possible Reason:
@@ -88,134 +65,95 @@ Possible Reason:
 - Lack of sleep
 - Dehydration
 
-
 Health Suggestions:
-✔ Drink enough water
 ✔ Rest properly
+✔ Drink enough water
 ✔ Reduce screen time
 
-
+📚 Source:
+Offline CareCall Knowledge
 """
-
 
 
     elif "chest" in message:
 
-
         return """
-
 🤖 CareCall AI Analysis
 
 Possible Heart Related Symptoms
 
-
 Suggestions:
 ✔ Monitor BP
-✔ Avoid heavy physical activity
+✔ Avoid heavy activity
 ✔ Seek medical help if pain continues
 
-
+📚 Source:
+Offline CareCall Knowledge
 """
 
 
-
-    elif "sugar" in message or "diabetes" in message:
-
+    elif "diabetes" in message or "sugar" in message:
 
         return """
-
 🤖 CareCall AI Analysis
 
 Possible Diabetes Related Symptoms
 
-
 Suggestions:
-✔ Monitor glucose level
+✔ Monitor glucose
 ✔ Maintain healthy diet
 ✔ Exercise regularly
 
-
+📚 Source:
+Offline CareCall Knowledge
 """
-
-
-
-    elif "urine" in message or "kidney" in message:
-
-
-        return """
-
-🤖 CareCall AI Analysis
-
-Possible Kidney Related Symptoms
-
-
-Suggestions:
-✔ Drink adequate water
-✔ Monitor symptoms
-✔ Consult healthcare professional
-
-
-"""
-
 
 
     else:
 
-
         return """
-
 🤖 CareCall AI Analysis
-
 
 General Suggestions:
 
 ✔ Maintain proper sleep
 ✔ Stay hydrated
 ✔ Eat nutritious food
-✔ Monitor symptoms
 
+Consult healthcare professional if symptoms continue.
 
-Consult doctor if symptoms continue.
-
+📚 Source:
+Offline CareCall Knowledge
 """
-
-
-
-
 
 
 
 # ================= RAG + GEMINI AI =================
 
-
 def ask_ai(message):
-
 
     try:
 
 
-        # -------- Retrieve medical knowledge --------
+        # -------- RAG SEARCH --------
 
-        context = retrieve_context(
-
-            message
-
-        )
+        context, sources = retrieve_context(message)
 
 
+
+        # -------- PROMPT --------
 
         prompt = f"""
-
 
 You are CareCall AI,
 an elderly healthcare assistant.
 
+Use ONLY the verified medical knowledge below.
 
-Use the verified medical knowledge below:
 
+Medical Knowledge:
 
 {context}
-
 
 
 Patient Symptoms:
@@ -239,33 +177,66 @@ Provide:
 Rules:
 
 - Explain simply
-- Do not prescribe medicine
-- Do not provide dangerous advice
 
+- Do not prescribe medicines
+
+- Do not give unsafe advice
+
+- Recommend doctor for serious symptoms
 
 """
 
 
+        # -------- GEMINI RESPONSE --------
 
-        response = model.generate_content(
-
-            prompt
-
+        response = client.models.generate_content(
+            model=MODEL_NAME,
+            contents=prompt
         )
 
 
-
-        return response.text
-
+        answer = response.text
 
 
 
+        # -------- ADD SOURCES --------
 
-    except Exception:
+        answer += """
+
+📚 Medical Sources:
+
+"""
 
 
-        return offline_health_ai(
+        if len(sources) > 0:
 
-            message
+            unique_sources = list(set(sources))
 
+
+            for source in unique_sources:
+
+                answer += f"""
+📄 {source}
+"""
+
+
+        else:
+
+            answer += """
+CareCall Medical Knowledge Base
+"""
+
+
+        return answer
+
+
+
+    except Exception as e:
+
+        print(
+            "AI ERROR:",
+            e
         )
+
+
+        return offline_health_ai(message)

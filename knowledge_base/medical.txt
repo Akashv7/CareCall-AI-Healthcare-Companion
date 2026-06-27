@@ -1,37 +1,87 @@
 Diabetes:
-Diabetes happens when blood sugar levels become high.
-Common symptoms include increased thirst, frequent urination,
-fatigue and weight changes.
+
+Diabetes is a condition where blood glucose levels become high.
+
+Common symptoms:
+- Increased thirst
+- Frequent urination
+- Fatigue
+- Slow wound healing
 
 Prevention:
-Maintain healthy diet, exercise regularly,
-monitor glucose level.
+- Maintain healthy diet
+- Regular exercise
+- Monitor blood sugar levels
+
+Consult doctor:
+If glucose level remains high.
 
 
 Heart Disease:
-Heart disease risk factors include high blood pressure,
-high cholesterol, smoking, obesity and lack of exercise.
+
+Heart disease affects the heart and blood vessels.
+
+Risk factors:
+- High blood pressure
+- High cholesterol
+- Smoking
+- Diabetes
+- Obesity
 
 Symptoms:
-Chest pain, breathing difficulty and irregular heartbeat.
+- Chest pain
+- Shortness of breath
+- Irregular heartbeat
+
+Prevention:
+- Healthy lifestyle
+- Control blood pressure
+- Exercise regularly
 
 
 Kidney Disease:
-Kidney disease can occur due to diabetes,
-high blood pressure and kidney damage.
+
+Kidney disease happens when kidneys cannot filter blood properly.
+
+Risk factors:
+- Diabetes
+- High blood pressure
 
 Symptoms:
-Swelling, tiredness, urine changes.
+- Swelling
+- Fatigue
+- Changes in urination
+
+Prevention:
+- Control sugar
+- Drink enough water
+- Regular checkups
 
 
-Fever:
-Fever may happen due to viral infections,
-bacterial infections or immune response.
+Hypertension:
 
-Suggestions:
-Drink fluids, rest properly and monitor temperature.
+High blood pressure increases heart risk.
+
+Symptoms:
+- Headache
+- Dizziness
+- Chest discomfort
+
+Management:
+- Reduce salt
+- Exercise
+- Monitor BP
 
 
-Headache:
-Common reasons include stress, dehydration,
-lack of sleep and infections.
+Asthma:
+
+A breathing condition caused by airway inflammation.
+
+Symptoms:
+- Wheezing
+- Coughing
+- Shortness of breath
+
+Prevention:
+- Avoid triggers
+- Follow doctor advice
