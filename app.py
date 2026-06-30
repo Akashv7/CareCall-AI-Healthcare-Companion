@@ -3,6 +3,9 @@ import streamlit as st
 from streamlit_autorefresh import st_autorefresh
 
 from src.report_generator import create_report
+from src.database import create_database
+
+create_database()
 
 from src.prediction import (
 
